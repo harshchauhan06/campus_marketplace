@@ -29,9 +29,11 @@ pool.query('SELECT NOW()', (err, res) => {
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const listingRoutes = require('./routes/listingRoutes');
+const favoriteRoutes = require('./routes/favoriteRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
+app.use('/api/favorites', favoriteRoutes);
 
 // Start Server
 app.listen(PORT, '0.0.0.0', () => {

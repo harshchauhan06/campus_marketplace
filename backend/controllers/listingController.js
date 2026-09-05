@@ -25,18 +25,48 @@ const createListing = async (req, res) => {
 };
 
 // @route   GET /api/listings
-// @desc    Get all active listings
+// @desc    Get all active listings (with optional search, filters, and sort)
 // @access  Public
 const getListings = async (req, res) => {
   try {
-    // Eventually add search and filters here
-    const listings = await pool.query(
-      `SELECT listings.*, users.name as seller_name, users.is_verified 
-       FROM listings 
-       JOIN users ON listings.seller_id = users.id 
-       WHERE listings.status = 'ACTIVE'
-       ORDER BY listings.created_at DESC`
-    );
+    const { search, category, type, sort } = req.query;
+    
+    let queryStr = `
+      SELECT listings.*, users.name as seller_name, users.is_verified 
+      FROM listings 
+      JOIN users ON listings.seller_id = users.id 
+      WHERE listings.status = 'ACTIVE'
+    `;
+    const queryParams = [];
+
+    // Add search condition if provided
+    if (search) {
+      queryParams.push(`%${search}%`);
+      queryStr += ` AND (listings.title ILIKE $${queryParams.length} OR listings.description ILIKE $${queryParams.length})`;
+    }
+
+    // Add category filter if provided
+    if (category) {
+      queryParams.push(category);
+      queryStr += ` AND listings.category = $${queryParams.length}`;
+    }
+
+    // Add type filter if provided
+    if (type) {
+      queryParams.push(type);
+      queryStr += ` AND listings.type = $${queryParams.length}`;
+    }
+
+    // Determine sorting
+    if (sort === 'price_asc') {
+      queryStr += ` ORDER BY listings.price ASC, listings.created_at DESC`;
+    } else if (sort === 'price_desc') {
+      queryStr += ` ORDER BY listings.price DESC, listings.created_at DESC`;
+    } else {
+      queryStr += ` ORDER BY listings.created_at DESC`; // Default 'newest'
+    }
+
+    const listings = await pool.query(queryStr, queryParams);
 
     res.json(listings.rows);
   } catch (error) {

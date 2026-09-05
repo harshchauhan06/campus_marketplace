@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // Import Screens
 import HomeScreen from '../screens/HomeScreen';
 import SellScreen from '../screens/SellScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -14,7 +15,7 @@ export default function MainTabNavigator() {
       screenOptions={{
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: 'gray',
-        headerShown: false, // We can enable this later if we want header bars
+        headerShown: false,
       }}
     >
       <Tab.Screen 
@@ -26,6 +27,11 @@ export default function MainTabNavigator() {
         name="SellTab" 
         component={SellScreen} 
         options={{ tabBarLabel: 'Sell' }} 
+      />
+      <Tab.Screen 
+        name="FavoritesTab" 
+        component={FavoritesScreen} 
+        options={{ tabBarLabel: 'Saved' }} 
       />
       <Tab.Screen 
         name="ProfileTab" 
