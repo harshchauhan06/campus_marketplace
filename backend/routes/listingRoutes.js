@@ -3,6 +3,7 @@ const router = express.Router();
 const { 
   createListing, 
   getListings, 
+  getMyListings,
   getListingById, 
   updateListing, 
   deleteListing 
@@ -11,6 +12,7 @@ const { protect } = require('../middleware/authMiddleware');
 
 // Public routes
 router.get('/', getListings);
+router.get('/my-listings', protect, getMyListings);
 router.get('/:id', getListingById);
 
 // Protected routes (require token)

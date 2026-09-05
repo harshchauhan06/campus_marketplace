@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -17,8 +18,10 @@ export default function LoginScreen({ navigation }) {
 
       const { token, user } = response.data;
       
-      // We will add SecureStore logic to save token later.
-      // For now, move straight to the Home screen!
+      // Save the token securely
+      await SecureStore.setItemAsync('userToken', token);
+      
+      // Move straight to the Home screen
       navigation.replace('Home');
       
     } catch (error) {

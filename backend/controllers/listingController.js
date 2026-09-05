@@ -45,6 +45,22 @@ const getListings = async (req, res) => {
   }
 };
 
+// @route   GET /api/listings/my-listings
+// @desc    Get all listings for the logged in user
+// @access  Private
+const getMyListings = async (req, res) => {
+  try {
+    const listings = await pool.query(
+      `SELECT * FROM listings WHERE seller_id = $1 ORDER BY created_at DESC`,
+      [req.user.id]
+    );
+    res.json(listings.rows);
+  } catch (error) {
+    console.error('Error fetching my listings:', error.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 // @route   GET /api/listings/:id
 // @desc    Get a single listing by ID
 // @access  Public
@@ -145,6 +161,7 @@ const deleteListing = async (req, res) => {
 module.exports = {
   createListing,
   getListings,
+  getMyListings,
   getListingById,
   updateListing,
   deleteListing,
